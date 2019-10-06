@@ -149,8 +149,12 @@ function main() {
 }
 
 function cliqueMouse(event){
-    console.log('clicou ' + event)
-    bloco.pulo()
+    if(estadoAtual == estados.jogando)
+        bloco.pulo()
+    else if(estadoAtual == estados.jogar)
+      estadoAtual = estados.jogando
+    else if(estadoAtual == estados.perdeu)
+        estadoAtual = estados.jogar          
 }
 
 function roda(){
@@ -164,7 +168,9 @@ function atualiza(){
     frames++;
 
     bloco.movimentoBloco();
-    obstaculos.movimentoObstaculo();
+    if(estadoAtual == estados.jogando){
+        obstaculos.movimentoObstaculo();
+    }
 }
 
 function desenha(){
