@@ -29,6 +29,7 @@ bloco = {
     velocidade: 0,
     forcaDoPulo:26,
     qtdpulo: 0,
+    score: 0,
 
     movimentoBloco: function(){
         this.velocidade += this.gravidade;
@@ -37,7 +38,8 @@ bloco = {
         // cai no chao
         if (this.y > chao.y - this.altura) {
             this.y = chao.y - this.altura
-            this.qtdpulo = 0
+            this.qtdpulo = 0;
+            // this.velocidade = 0;
         }
     },
 
@@ -51,6 +53,11 @@ bloco = {
     desenha: function() {
         contexto.fillStyle = this.cor;
         contexto.fillRect(this.x, this.y,this.largura,this.altura)
+    },
+    reset: function() {
+        this.y = 0,
+        this.velocidade = 0;
+        this.score = 0;
     }
 },
 
@@ -62,7 +69,7 @@ obstaculos = {
     inserir: function() {
         this.objetos.push({
             x: LARGURA,
-            largura: 30 + Math.floor(21 * Math.random()),
+            largura: 50,
             altura: 30 + Math.floor(120 * Math.random()),
             cor: this.cores[Math.floor(5 * Math.random())]
         })
@@ -110,9 +117,11 @@ obstaculos = {
             // verificando colisão
             if(bloco.x < obstaculo.x + obstaculo.largura 
                 && bloco.x + bloco.largura >= obstaculo.x
-                && bloco.y + bloco.altura >= chao.y - obstaculo.altura){
+                && bloco.y + bloco.altura >= chao.y - obstaculo.altura)
                     estadoAtual = estados.perdeu
-            }
+            
+            else if (obstaculo.x == 0)
+                bloco.score++;        
 
             // remove os obstaculos quando passa do canvas
             else if(obstaculo.x <= -obstaculo.largura){
@@ -166,8 +175,10 @@ function cliqueMouse(event){
         bloco.pulo()
     else if(estadoAtual == estados.jogar)
       estadoAtual = estados.jogando
-    else if(estadoAtual == estados.perdeu)
+    else if(estadoAtual == estados.perdeu){
         estadoAtual = estados.jogar     
+        obstaculos.limpa()
+    }
   }           
 }
 
@@ -175,6 +186,7 @@ function roda(){
     atualiza();
     desenha();
 
+    // isso faz com que fique num loop
     window.requestAnimationFrame(roda)
 }
 
@@ -184,8 +196,6 @@ function atualiza(){
     bloco.movimentoBloco();
     if(estadoAtual == estados.jogando)
         obstaculos.movimentoObstaculo();
-    else if (estadoAtual === estados.perdeu)
-        obstaculos.limpa();
 }
 
 function desenha(){
@@ -193,6 +203,12 @@ function desenha(){
     contexto.fillStyle = '#50beff'
     contexto.fillRect(0,0,LARGURA,ALTURA);
 
+    //mostrando o score na tela
+    contexto.fillStyle = '#fff'
+    contexto.font = '50px Arial'
+    contexto.fillText(bloco.score,0,38)
+
+    // opções do jogo
     if(estadoAtual == estados.jogar){
         contexto.fillStyle = 'green'
         contexto.fillRect(LARGURA/2 - 50, ALTURA/2 - 50, 100, 100);
