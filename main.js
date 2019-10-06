@@ -1,4 +1,4 @@
-var canvas, contexto, ALTURA, LARGURA, frames = 0,
+var canvas, contexto, ALTURA, LARGURA, frames = 0, maxPulos = 3,
 
 chao = {
     y: 350,
@@ -20,18 +20,24 @@ bloco = {
     gravidade: 1.5,
     velocidade: 0,
     forcaDoPulo:15,
+    qtdpulo: 0,
 
     movimentoBloco: function(){
         this.velocidade += this.gravidade;
         this.y += this.velocidade;
 
+        // cai no chao
         if (this.y > chao.y - this.altura) {
             this.y = chao.y - this.altura
+            this.qtdpulo = 0
         }
     },
 
     pulo: function(){
-        this.velocidade = -this.forcaDoPulo
+        if(this.qtdpulo < maxPulos){
+            this.velocidade = -this.forcaDoPulo
+            this.qtdpulo++;
+        }
     },
 
     desenha: function() {
@@ -63,7 +69,7 @@ function main() {
 
     contexto = canvas.getContext('2d');
     document.body.appendChild(canvas);
-    document.addEventListener('mousedown', cliqueMouse)
+    document.addEventListener('keydown', cliqueMouse)
 
     roda();
 }
