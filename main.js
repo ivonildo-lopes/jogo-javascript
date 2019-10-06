@@ -1,7 +1,8 @@
-var canvas, contexto, ALTURA, LARGURA, frames = 0, maxPulos = 3,
+var canvas, contexto, ALTURA, LARGURA, 
+    frames = 0, maxPulos = 3, velocidadeObstaculo = 6,
 
 chao = {
-    y: 350,
+    y: 550,
     altura: 50,
     cor:'#ffdf70',
     
@@ -44,6 +45,70 @@ bloco = {
         contexto.fillStyle = this.cor;
         contexto.fillRect(this.x, this.y,this.largura,this.altura)
     }
+},
+
+obstaculos = {
+    objetos: [],
+    cores: ['#ffbc1c','#ff1c1c','#ff85e1','#52a7ff','#78ff5d'],
+    tempo: 0,
+
+    inserir: function() {
+        this.objetos.push({
+            x: LARGURA,
+            largura: 30 + Math.floor(21 * Math.random()),
+            altura: 30 + Math.floor(120 * Math.random()),
+            cor: this.cores[Math.floor(5 * Math.random())]
+        })
+
+
+        this.tempo = 30 + Math.floor(21 * Math.random());
+
+        // velocidadeObstaculo == 3 ? this.tempo = 70: this.tempo = 30 + Math.floor(21 * Math.random());
+
+        // setInterval(mudarTempo, 1000 * 30)
+
+        // function mudarTempo() {
+        //    if(velocidadeObstaculo < 20) 
+        //       velocidadeObstaculo++;
+        //     else
+        //        velocidadeObstaculo = 6
+        // }
+
+        
+    },
+    desenha: function() { 
+        for (var i = 0, tam = this.objetos.length ; i < tam; i++) {
+
+            var obstaculo = this.objetos[i];
+
+            contexto.fillStyle = obstaculo.cor;
+            contexto.fillRect(obstaculo.x, chao.y - obstaculo.altura,
+                            obstaculo.largura,obstaculo.altura);
+            
+        }
+    },
+    movimentoObstaculo: function() {
+        if(this.tempo == 0){
+            this.inserir();
+        }else{
+            this.tempo--;    
+        }
+
+        for (var i = 0, tam = this.objetos.length ; i < tam; i++) {
+
+            var obstaculo = this.objetos[i];
+
+            obstaculo.x -= velocidadeObstaculo;
+
+            if(obstaculo.x <= -obstaculo.largura){
+                this.objetos.splice(i,1);
+                tam--;
+                i--;
+            }
+            
+        }
+    }
+
 };
 
 function defineTamanhoTela() {
@@ -51,8 +116,8 @@ function defineTamanhoTela() {
     LARGURA = window.innerWidth;
 
     if(LARGURA >= 500){
-        ALTURA = 400;
-        LARGURA = 400;
+        ALTURA = 600;
+        LARGURA = 600;
     }
 }
 
@@ -69,7 +134,7 @@ function main() {
 
     contexto = canvas.getContext('2d');
     document.body.appendChild(canvas);
-    document.addEventListener('keydown', cliqueMouse)
+    document.addEventListener('mousedown', cliqueMouse)
 
     roda();
 }
@@ -89,7 +154,8 @@ function roda(){
 function atualiza(){
     frames++;
 
-    bloco.movimentoBloco()
+    bloco.movimentoBloco();
+    obstaculos.movimentoObstaculo();
 }
 
 function desenha(){
@@ -97,8 +163,9 @@ function desenha(){
     contexto.fillStyle = '#50beff'
     contexto.fillRect(0,0,LARGURA,ALTURA);
 
-    chao.desenha()
-    bloco.desenha()
+    chao.desenha();
+    obstaculos.desenha();    
+    bloco.desenha();
 
 }
 
