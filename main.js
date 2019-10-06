@@ -1,4 +1,4 @@
-var canvas, contexto, ALTURA, LARGURA, frames = 0;
+var canvas, contexto, ALTURA, LARGURA, frames = 0,
 
 chao = {
     y: 350,
@@ -8,6 +8,35 @@ chao = {
     desenha: function() {
         contexto.fillStyle = this.cor;
         contexto.fillRect(0, this.y,LARGURA,this.altura)
+    }
+},
+
+bloco = {
+    x: 50,
+    y: 0,
+    altura:50,
+    largura: 50,
+    cor: '#ff4e4e',
+    gravidade: 1.5,
+    velocidade: 0,
+    forcaDoPulo:15,
+
+    movimentoBloco: function(){
+        this.velocidade += this.gravidade;
+        this.y += this.velocidade;
+
+        if (this.y > chao.y - this.altura) {
+            this.y = chao.y - this.altura
+        }
+    },
+
+    pulo: function(){
+        this.velocidade = -this.forcaDoPulo
+    },
+
+    desenha: function() {
+        contexto.fillStyle = this.cor;
+        contexto.fillRect(this.x, this.y,this.largura,this.altura)
     }
 };
 
@@ -41,6 +70,7 @@ function main() {
 
 function cliqueMouse(event){
     console.log('clicou ' + event)
+    bloco.pulo()
 }
 
 function roda(){
@@ -52,6 +82,8 @@ function roda(){
 
 function atualiza(){
     frames++;
+
+    bloco.movimentoBloco()
 }
 
 function desenha(){
@@ -60,6 +92,7 @@ function desenha(){
     contexto.fillRect(0,0,LARGURA,ALTURA);
 
     chao.desenha()
+    bloco.desenha()
 
 }
 
