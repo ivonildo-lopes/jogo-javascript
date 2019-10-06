@@ -27,7 +27,7 @@ bloco = {
     cor: '#ff4e4e',
     gravidade: 1.5,
     velocidade: 0,
-    forcaDoPulo:15,
+    forcaDoPulo:26,
     qtdpulo: 0,
 
     movimentoBloco: function(){
@@ -107,16 +107,28 @@ obstaculos = {
 
             obstaculo.x -= velocidadeObstaculo;
 
-            if(obstaculo.x <= -obstaculo.largura){
+            // verificando colisão
+            if(bloco.x < obstaculo.x + obstaculo.largura 
+                && bloco.x + bloco.largura >= obstaculo.x
+                && bloco.y + bloco.altura >= chao.y - obstaculo.altura){
+                    estadoAtual = estados.perdeu
+            }
+
+            // remove os obstaculos quando passa do canvas
+            else if(obstaculo.x <= -obstaculo.largura){
                 this.objetos.splice(i,1);
                 tam--;
                 i--;
             }
             
         }
+    },
+
+    limpa: function(){
+        this.objetos = []
     }
 
-};
+}
 
 function defineTamanhoTela() {
     ALTURA = window.innerHeight;
@@ -141,7 +153,7 @@ function main() {
 
     contexto = canvas.getContext('2d');
     document.body.appendChild(canvas);
-    document.addEventListener('mousedown', cliqueMouse)
+    document.addEventListener('keydown', cliqueMouse)
 
     estadoAtual = estados.jogar
 
@@ -149,12 +161,14 @@ function main() {
 }
 
 function cliqueMouse(event){
+  if(event.code === 'Space') { 
     if(estadoAtual == estados.jogando)
         bloco.pulo()
     else if(estadoAtual == estados.jogar)
       estadoAtual = estados.jogando
     else if(estadoAtual == estados.perdeu)
-        estadoAtual = estados.jogar          
+        estadoAtual = estados.jogar     
+  }           
 }
 
 function roda(){
@@ -168,9 +182,10 @@ function atualiza(){
     frames++;
 
     bloco.movimentoBloco();
-    if(estadoAtual == estados.jogando){
+    if(estadoAtual == estados.jogando)
         obstaculos.movimentoObstaculo();
-    }
+    else if (estadoAtual === estados.perdeu)
+        obstaculos.limpa();
 }
 
 function desenha(){
