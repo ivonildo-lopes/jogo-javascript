@@ -1,5 +1,12 @@
 var canvas, contexto, ALTURA, LARGURA, 
     frames = 0, maxPulos = 3, velocidadeObstaculo = 6,
+    estadoAtual,
+
+estados = {
+    jogar: 0,
+    jogando: 1,
+    perdeu: 2
+}    
 
 chao = {
     y: 550,
@@ -136,6 +143,8 @@ function main() {
     document.body.appendChild(canvas);
     document.addEventListener('mousedown', cliqueMouse)
 
+    estadoAtual = estados.jogar
+
     roda();
 }
 
@@ -163,8 +172,16 @@ function desenha(){
     contexto.fillStyle = '#50beff'
     contexto.fillRect(0,0,LARGURA,ALTURA);
 
+    if(estadoAtual == estados.jogar){
+        contexto.fillStyle = 'green'
+        contexto.fillRect(LARGURA/2 - 50, ALTURA/2 - 50, 100, 100);
+    } else if (estadoAtual == estados.perdeu) {
+        contexto.fillStyle = 'red'
+        contexto.fillRect(LARGURA/2 - 50, ALTURA/2 - 50, 100, 100);
+    } else
+        obstaculos.desenha();    
+    
     chao.desenha();
-    obstaculos.desenha();    
     bloco.desenha();
 
 }
