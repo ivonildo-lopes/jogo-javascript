@@ -27,7 +27,7 @@ bloco = {
     cor: '#ff4e4e',
     gravidade: 1.5,
     velocidade: 0,
-    forcaDoPulo:26,
+    forcaDoPulo:20,
     qtdpulo: 0,
     score: 0,
 
@@ -162,24 +162,39 @@ function main() {
 
     contexto = canvas.getContext('2d');
     document.body.appendChild(canvas);
-    document.addEventListener('keydown', cliqueMouse)
+    document.addEventListener('mousedown', acao)
+    document.addEventListener('keydown', acao)
 
     estadoAtual = estados.jogar
 
     roda();
 }
 
-function cliqueMouse(event){
-  if(event.code === 'Space') { 
-    if(estadoAtual == estados.jogando)
-        bloco.pulo()
-    else if(estadoAtual == estados.jogar)
-      estadoAtual = estados.jogando
-    else if(estadoAtual == estados.perdeu){
-        estadoAtual = estados.jogar     
-        obstaculos.limpa()
-    }
-  }           
+function acao(event){
+
+    if(event.code === 'Space' || event.type === 'mousedown') { 
+        if(estadoAtual == estados.jogando)
+             bloco.pulo()
+         else if(estadoAtual == estados.jogar)
+            estadoAtual = estados.jogando
+         else if(estadoAtual == estados.perdeu){
+            estadoAtual = estados.jogar     
+            obstaculos.limpa()
+            bloco.reset()
+        }
+    }    
+
+//   if(event.code === 'Space') { 
+    // if(estadoAtual == estados.jogando)
+    //     bloco.pulo()
+    // else if(estadoAtual == estados.jogar)
+    //   estadoAtual = estados.jogando
+    // else if(estadoAtual == estados.perdeu){
+    //     estadoAtual = estados.jogar     
+    //     obstaculos.limpa()
+    //     bloco.reset()
+    // }
+//   }           
 }
 
 function roda(){
